@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>Image scape</title>
+    <script src="app.js" type="module" defer></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Image scrape</h1>
+    <p>Downloads a .json containing scraped html from a .csv</p>
+
+    <div class="config">
+      <label>CSVColumn</label>
+      <input type="text" name="CSVColumn" value="url" />
+      <label>container (css-selector)</label>
+      <input type="text" name="container" value=".pdp-swiper" />
+      <label>getAll</label>
+      <input type="text" name="getAll" value="img" />
+      <label>getAttribute</label>
+      <input type="text" name="getAttribute" value="data-src" />
+      <label>outputFilename</label>
+      <input type="text" name="outputFilename" value="output-file" />
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="dropzone"></form>
+  </body>
+</html>
