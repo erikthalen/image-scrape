@@ -65,6 +65,6 @@ app.get("/", function (_, res) {
   res.end();
 });
 
-app.listen(1337, function () {
+app.listen(process.env.PORT || 1337, function () {
   console.log("server running on 1337");
 });
