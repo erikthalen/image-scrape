@@ -11,7 +11,7 @@ const upload = multer({ storage: storage });
 
 app.use(express.static("./"));
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+// app.use(express.json());
 
 app.post("/upload", upload.single("file"), async (req, res) => {
   const config = req.query;
