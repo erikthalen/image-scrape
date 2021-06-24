@@ -1,178 +1,36 @@
-@import "./node_modules/dropzone/dist/dropzone.css";
-
-:root {
-  --speedFadeIn: 2s;
-  --speedHover: 0.3ms;
-
-  --colorText: rgb(120, 120, 120);
-  --colorTextAccent: rgb(134, 134, 134);
-  --colorBackground: rgb(240, 240, 240);
-}
-
-/*transition: box-shadow 0.3s ease-in-out;*/
+@import "./node_modules/carbon-components/css/carbon-components.min.css";
 
 body {
-  background-color: var(--colorBackground);
-  color: var(--colorText);
-
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-
-  font-weight: lighter;
-  user-select: none;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
 }
 
-h1 {
-  font-weight: lighter;
-  font-size: 100px;
-  margin: 0;
+.app {
+  max-width: 20rem;
+  display: grid;
+  gap: 10px;
+  margin: 30px;
+  padding-right: 30px;
+  border-right: 1px solid;
 }
 
 .config {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
-input {
-  color: inherit;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1), -2px -2px 4px #ffffff;
-  border: 0;
-  padding: 10px;
-  border-radius: 10px;
+.docs {
+  padding: 20px;
+  box-sizing: border-box;
+  display: grid;
+  gap: 20px;
 }
 
-@keyframes fadeH1 {
-  0% {
-    color: var(--colorBackground);
-    text-shadow: 0px 0px 0px var(--colorBackground);
-  }
-  50% {
-    color: var(--colorBackground);
-  }
-  100% {
-    color: var(--colorText);
-    text-shadow: 14px 14px 7px rgba(0, 0, 0, 0.1);
-  }
-}
-
-@keyframes fadeFooter {
-  0% {
-    color: var(--colorBackground);
-    text-shadow: 0px 0px 10px var(--colorBackground);
-  }
-  50% {
-    color: var(--colorBackground);
-  }
-  100% {
-    color: var(--colorText);
-    text-shadow: 14px 14px 5px rgba(0, 0, 0, 0.1);
-  }
-}
-
-/* dropzone */
-
-.dropzone {
-  width: 371px;
-  height: 371px;
-  margin: 80px;
-  border-radius: 50px;
-  cursor: pointer;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  animation: dropzoneFade var(--speedFadeIn) ease-in-out;
-  animation-fill-mode: forwards;
-
-  min-height: auto;
-  border: 0;
-  background: transparent;
-}
-
-.dropzone.dz-drag-hover {
-  animation: dropzoneHover var(--speedHover) ease-in-out;
-  animation-fill-mode: forwards;
-}
-
-.dropzone.dz-drag-hover .dz-message {
-  animation: fadeDropzoneTextHover var(--speedFadeIn) ease-in-out;
-  animation-fill-mode: forwards;
-}
-
-.dropzone .dz-preview .dz-details .dz-filename {
-  white-space: initial;
-  overflow: initial;
-  text-overflow: initial;
-}
-
-.dropzone .dz-preview .dz-details .dz-size {
-  display: none;
-}
-
-.dropzone .dz-preview .dz-details .dz-filename span {
-  background-color: transparent;
-  padding: 0;
-  border-radius: 0;
-}
-
-@keyframes dropzoneHover {
-  0% {
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1), -2px -2px 4px #ffffff;
-  }
-  50% {
-    box-shadow: none;
-  }
-  100% {
-    box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.1),
-      inset -2px -2px 4px #ffffff;
-  }
-}
-
-@keyframes dropzoneFade {
-  from {
-    box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.1), 0px 0px 0px #ffffff;
-  }
-  to {
-    box-shadow: 20px 20px 80px rgba(0, 0, 0, 0.1), -20px -20px 40px #ffffff;
-  }
-}
-
-.dz-message {
-  animation: fadeDropzoneText var(--speedFadeIn) ease-in-out;
-  animation-fill-mode: forwards;
-}
-
-@keyframes fadeDropzoneText {
-  0% {
-    color: var(--colorBackground);
-    text-shadow: 0px 0px 0px var(--colorBackground);
-  }
-  50% {
-    color: var(--colorBackground);
-  }
-  100% {
-    color: var(--colorTextAccent);
-    text-shadow: 10px 10px 5px rgba(0, 0, 0, 0.1);
-  }
-}
-
-@keyframes fadeDropzoneTextHover {
-  0% {
-    color: var(--colorTextAccent);
-    text-shadow: 10px 10px 5px rgba(0, 0, 0, 0.1);
-  }
-  100% {
-    color: var(--colorTextAccent);
-    text-shadow: 20px 20px 20px rgba(0, 0, 0, 0.2);
-  }
+img {
+  width: 600px;
+  max-width: 100%;
 }

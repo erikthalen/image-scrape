@@ -1,7 +1,6 @@
 import express from "express";
 import multer from "multer";
 import csv from "csvtojson";
-import { config } from "./config.js";
 import jsdom from "jsdom";
 
 const { JSDOM } = jsdom;
