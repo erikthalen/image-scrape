@@ -6,18 +6,24 @@ import jsdom from "jsdom";
 const { JSDOM } = jsdom;
  
 const app = express();
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// const storage = multer.memoryStorage();
+const upload = multer();
 
 app.use(express.static("./"));
 app.use(express.urlencoded({ extended: false }));
-// app.use(express.json());
 
 app.post("/upload", upload.single("file"), async (req, res) => {
   const config = req.query;
 
+  console.log(req.file)
+
+  // if(!req.file.buffer) {
+  //   throw new Error('No file', req.file)
+  // }
+
   // convert the file to json
   var b = req.file["buffer"];
+
   const [head, ...json] = await csv({
     noheader: true,
     output: "csv",
@@ -27,10 +33,11 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   const targetColumn = head.findIndex((col) => col === config.CSVColumn);
 
   const result = await Promise.all(
-    json.map(async (page) => {
+    json.map(async (column) => {
+      const page = column[targetColumn]
       const {
         window: { document },
-      } = await JSDOM.fromURL(page[targetColumn]);
+      } = await JSDOM.fromURL(page);
       // parse the fetched page
       const targetDOMElement = document.querySelector(config.container);
       const elements = targetDOMElement.querySelectorAll(config.getAll);
@@ -42,11 +49,19 @@ app.post("/upload", upload.single("file"), async (req, res) => {
           : image[config.getAttribute]
       );
 
+      const testUrl = '/on/demandware.static/-/Sites-acne-product-catalog/default/dweddd43ca/images/AL/AL0239-/1500x/AL0239-CRY_C.jpg'
+
+      // const pageUrl = new URL(page)
+      // const domain = pageUrl.domain
+      // // const imageUrls = images.map(imageSrc => imageSrc.includes(testUrl))
+      // const test = new URL(testUrl)
+      // console.log(test)
+
       // construct formatted json, including the scraped urls
       return head.reduce((acc, cur, idx) => {
         return {
           ...acc,
-          [cur]: page[idx],
+          [cur]: column[idx],
           images,
         };
       }, {});
