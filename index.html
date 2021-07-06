@@ -9,87 +9,103 @@
       <h1>Image scrape</h1>
       <p>Downloads a .json containing scraped html from a .csv</p>
 
-      <div class="config">
-        <div class="bx--form-item bx--text-input-wrapper">
-          <label for="text-input-1" class="bx--label">CSVColumn</label>
-          <div class="bx--form__helper-text">
-            The column in the spreadsheet, that contains the url for the page
-            that will be scraped
-          </div>
-          <div class="bx--text-input__field-wrapper">
-            <input
-              id="text-input-1"
-              type="text"
-              class="bx--text-input"
-              name="CSVColumn"
-              value="url"
-            />
-          </div>
-        </div>
-        <div class="bx--form-item bx--text-input-wrapper">
-          <label for="text-input-2" class="bx--label"
-            >container (css-selector)</label
-          >
-          <div class="bx--form__helper-text">
-            The DOM-container in which the target elements are. (if we only want
-            the images in the carousel f.ex.)
-          </div>
-          <div class="bx--text-input__field-wrapper">
-            <input
-              id="text-input-2"
-              type="text"
-              class="bx--text-input"
-              name="container"
-              value=".pdp-swiper"
-            />
-          </div>
-        </div>
-        <div class="bx--form-item bx--text-input-wrapper">
-          <label for="text-input-3" class="bx--label">getAll</label>
-          <div class="bx--form__helper-text">
-            What elements we want, from inside the [container]
-          </div>
-          <div class="bx--text-input__field-wrapper">
-            <input
-              id="text-input-3"
-              type="text"
-              class="bx--text-input"
-              name="getAll"
-              value="img"
-            />
-          </div>
-        </div>
-        <div class="bx--form-item bx--text-input-wrapper">
-          <label for="text-input-4" class="bx--label">getAttribute</label>
-          <div class="bx--form__helper-text">
-            The attribute to get, from the [elements] in the [container]
-          </div>
-          <div class="bx--text-input__field-wrapper">
-            <input
-              id="text-input-4"
-              type="text"
-              class="bx--text-input"
-              name="getAttribute"
-              value="data-src"
-            />
-          </div>
-        </div>
-        <div class="bx--form-item bx--text-input-wrapper">
-          <label for="text-input-5" class="bx--label">outputFilename</label>
-          <div class="bx--form__helper-text">Name of the generated file.</div>
-          <div class="bx--text-input__field-wrapper">
-            <input
-              id="text-input-5"
-              type="text"
-              class="bx--text-input"
-              name="outputFilename"
-              value="output-file"
-            />
-          </div>
-        </div>
-      </div>
-
       <form action="/upload" method="post" enctype="multipart/form-data">
+        <div class="config">
+          <div class="bx--form-item bx--text-input-wrapper">
+            <label for="text-input-1" class="bx--label">Seperator</label>
+            <div class="bx--form__helper-text">
+              The character used as a column seperator in the file. Can be
+              obtained by opening the file in text-edit
+            </div>
+            <div class="bx--text-input__field-wrapper">
+              <input
+                id="text-input-0"
+                type="text"
+                class="bx--text-input"
+                name="seperator"
+                value="\t"
+              />
+            </div>
+          </div>
+          <div class="bx--form-item bx--text-input-wrapper">
+            <label for="text-input-1" class="bx--label">CSVColumn</label>
+            <div class="bx--form__helper-text">
+              The column in the spreadsheet, that contains the url for the page
+              that will be scraped
+            </div>
+            <div class="bx--text-input__field-wrapper">
+              <input
+                id="text-input-1"
+                type="text"
+                class="bx--text-input"
+                name="CSVColumn"
+                value="link"
+              />
+            </div>
+          </div>
+          <div class="bx--form-item bx--text-input-wrapper">
+            <label for="text-input-2" class="bx--label"
+              >container (css-selector)</label
+            >
+            <div class="bx--form__helper-text">
+              The DOM-container in which the target elements are. (if we only
+              want the images in the carousel f.ex.)
+            </div>
+            <div class="bx--text-input__field-wrapper">
+              <input
+                id="text-input-2"
+                type="text"
+                class="bx--text-input"
+                name="container"
+                value=".pdp-swiper"
+              />
+            </div>
+          </div>
+          <div class="bx--form-item bx--text-input-wrapper">
+            <label for="text-input-3" class="bx--label">getAll</label>
+            <div class="bx--form__helper-text">
+              What elements we want, from inside the [container]
+            </div>
+            <div class="bx--text-input__field-wrapper">
+              <input
+                id="text-input-3"
+                type="text"
+                class="bx--text-input"
+                name="getAll"
+                value="img"
+              />
+            </div>
+          </div>
+          <div class="bx--form-item bx--text-input-wrapper">
+            <label for="text-input-4" class="bx--label">getAttribute</label>
+            <div class="bx--form__helper-text">
+              The attribute to get, from the [elements] in the [container]
+            </div>
+            <div class="bx--text-input__field-wrapper">
+              <input
+                id="text-input-4"
+                type="text"
+                class="bx--text-input"
+                name="getAttribute"
+                value="data-src"
+              />
+            </div>
+          </div>
+          <div class="bx--form-item bx--text-input-wrapper">
+            <label for="text-input-5" class="bx--label">outputFilename</label>
+            <div class="bx--form__helper-text">Name of the generated file.</div>
+            <div class="bx--text-input__field-wrapper">
+              <input
+                id="text-input-5"
+                type="text"
+                class="bx--text-input"
+                name="outputFilename"
+                value="output-file"
+              />
+            </div>
+          </div>
+        </div>
+
         <div class="bx--form-item">
           <strong class="bx--file--label">File</strong>
           <p class="bx--label-description">Only .csv</p>
@@ -120,6 +136,10 @@
         <button class="bx--btn bx--btn--primary" type="submit">Upload</button>
       </form>
     </div>
+
+    <p style="position: absolute; padding: 5px 10px; color: green">
+      <span class="output">0</span> rows processed
+    </p>
 
     <div class="docs">
       <p>Example input/output:</p>

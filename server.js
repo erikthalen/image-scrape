@@ -1,78 +1,90 @@
+import csv from "csv-parser";
 import express from "express";
 import multer from "multer";
-import csv from "csvtojson";
 import jsdom from "jsdom";
+import streamifier from "streamifier";
+import { Server } from "socket.io";
+import http from "http";
+import transform from "parallel-transform";
 
 const { JSDOM } = jsdom;
- 
+
 const app = express();
-// const storage = multer.memoryStorage();
 const upload = multer();
+const server = http.createServer(app);
+const io = new Server(server);
 
 app.use(express.static("./"));
 app.use(express.urlencoded({ extended: false }));
 
-app.post("/upload", upload.single("file"), async (req, res) => {
-  const config = req.query;
+const getHTMLAttributes = (els, attr) => {
+  return [...els].map((el) =>
+    attr.includes("data-") ? el.dataset[attr.replace("data-", "")] : el[attr]
+  );
+};
 
-  console.log(req.file)
+const processUrl = async (url, config) => {
+  const {
+    window: { document },
+  } = await JSDOM.fromURL(url);
 
-  // if(!req.file.buffer) {
-  //   throw new Error('No file', req.file)
-  // }
+  const targetDOMElement = document.querySelector(config.container);
+  const elements = targetDOMElement.querySelectorAll(config.getAll);
 
-  // convert the file to json
-  var b = req.file["buffer"];
+  return elements;
+};
 
-  const [head, ...json] = await csv({
-    noheader: true,
-    output: "csv",
-  }).fromString(b.toString());
+async function processStream(readable, config, onData) {
+  let results = [];
 
-  // what column/index to check, in each row
-  const targetColumn = head.findIndex((col) => col === config.CSVColumn);
-
-  const result = await Promise.all(
-    json.map(async (column) => {
-      const page = column[targetColumn]
-      const {
-        window: { document },
-      } = await JSDOM.fromURL(page);
-      // parse the fetched page
-      const targetDOMElement = document.querySelector(config.container);
-      const elements = targetDOMElement.querySelectorAll(config.getAll);
-
-      // extract passed attribute
-      const images = [...elements].map((image) =>
-        config.getAttribute.includes("data-")
-          ? image.dataset[config.getAttribute.replace("data-", "")]
-          : image[config.getAttribute]
-      );
-
-      const testUrl = '/on/demandware.static/-/Sites-acne-product-catalog/default/dweddd43ca/images/AL/AL0239-/1500x/AL0239-CRY_C.jpg'
-
-      // const pageUrl = new URL(page)
-      // const domain = pageUrl.domain
-      // // const imageUrls = images.map(imageSrc => imageSrc.includes(testUrl))
-      // const test = new URL(testUrl)
-      // console.log(test)
-
-      // construct formatted json, including the scraped urls
-      return head.reduce((acc, cur, idx) => {
+  const stream = transform(10, (data, callback) => callback(null, data));
+  
+  stream.on("data", async function (data) {
+    // console.log(data);
+    const url = data[config.CSVColumn];
+    const elements = await processUrl(url, config);
+    const imageUrls = getHTMLAttributes(elements, config.getAttribute);
+    const newData = {
+      ...data,
+      ...imageUrls.reduce((acc, url, idx) => {
         return {
           ...acc,
-          [cur]: column[idx],
-          images,
+          [`image-${idx}`]: url,
         };
-      }, {});
-    })
-  );
+      }, {}),
+    };
+    
+    results.push(newData);
+    
+    onData(results.length);
+  });
+  
+  stream.on("end", () => {
+    console.log("stream has ended");
+    return results;
+  });
+  
+  stream.write(readable);
 
-  // send back the contructed json
+  // return results;
+}
+
+app.post("/upload", upload.single("file"), async (req, res) => {
+  const config = req.body;
+  const buffer = req.file["buffer"];
+
+  const stream = streamifier
+    .createReadStream(buffer)
+    .pipe(csv({ separator: config.seperator }));
+
+  const results = await processStream(stream, config, (count) => {
+    io.sockets.emit("row", count);
+  });
+
   res
     .status(200)
     .attachment(`${config.outputFilename}.json`)
-    .send(JSON.stringify(result));
+    .send(JSON.stringify(results));
 });
 
 app.get("/", function (_, res) {
@@ -80,6 +92,6 @@ app.get("/", function (_, res) {
   res.end();
 });
 
-app.listen(process.env.PORT || 1337, function () {
+server.listen(process.env.PORT || 1337, function () {
   console.log("server running on 1337");
 });
