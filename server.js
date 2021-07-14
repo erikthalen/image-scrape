@@ -13,10 +13,8 @@ import transform from "parallel-transform";
  * 2. File is converted to readStream to be processed.
  * 3. Each row in the stream is read and written to a parallel-stream,
  *    so the async stuff can happen in parallel.
- * 4. TODO: The parallel-stream !SHOULD! fetch multiple rows at the time,
+ * 4. The parallel-stream fetches multiple rows at the time,
  *    and save the results. When all rows are fetched, return the result.
- *    Atm it doesn't wait for the rows to come back before the result is sent to the client.
- *
  */
 
 const { JSDOM } = jsdom;
@@ -27,6 +25,12 @@ const io = new Server(server);
 
 app.use(express.static("./"));
 app.use(express.urlencoded({ extended: false }));
+
+io.on("connection", (socket) => {
+  socket.on("chat message", (msg) => {
+    console.log("message: " + msg);
+  });
+});
 
 /**
  * Takes an dom element and an attribute,
@@ -58,15 +62,30 @@ const processUrl = async (url, config) => {
 async function processStream(readable, config, onData) {
   return new Promise(async (resolve) => {
     let results = [];
+    let length = 0;
+    let doneAmount = 0;
 
     /**
-     * TODO: it takes to long to "await" each row,
+     * It takes to long to "await" each row one-by-one,
      * "transform" runs in parallel, which should speed things up.
      */
-    const parallismLevel = 10;
-    const stream = transform(parallismLevel, (data, callback) =>
-      callback(null, data)
-    );
+    const parallismLevel = 300;
+    const stream = transform(parallismLevel, async (data, callback) => {
+      const url = data[config.CSVColumn];
+      const elements = await processUrl(url, config);
+      const imageUrls = getHTMLAttributes(elements, config.getAttribute);
+      const result = {
+        ...data,
+        ...imageUrls.reduce((acc, url, idx) => {
+          return {
+            ...acc,
+            [`image-${idx}`]: url,
+          };
+        }, {}),
+      };
+
+      callback(null, result);
+    });
 
     /**
      * Write the passed stream into transform,
@@ -74,43 +93,26 @@ async function processStream(readable, config, onData) {
      */
     for await (const chunk of readable) {
       stream.write(chunk);
+      length++;
     }
     stream.end();
+    io.sockets.emit("total", length);
 
     /**
      * When a new row is written, do the fetching!
      * and push finished row to "results"
      */
-    stream.on("data", async function (data) {
-      const url = data[config.CSVColumn];
-      // // NOTE: async doesn't work
-      // const elements = await processUrl(url, config);
-      // const imageUrls = getHTMLAttributes(elements, config.getAttribute);
-      // const newData = {
-      //   ...data,
-      //   ...imageUrls.reduce((acc, url, idx) => {
-      //     return {
-      //       ...acc,
-      //       [`image-${idx}`]: url,
-      //     };
-      //   }, {}),
-      // };
-
-      // test: just write a line from the passed row (no async) works fine
-      const newData = url;
-
-      results.push(newData);
-
+    stream.on("data", (result) => {
+      results.push(result);
+      doneAmount++;
       // callback, for socket.io to update the client
-      onData(results.length);
+      onData(doneAmount);
     });
 
     /**
-     * TODO: The "end" is when the input file is written to the parallel-stream,
-     * not when the proccessed rows are fetched.
+     * Resolve the results back to caller.
      */
     stream.on("end", () => {
-      console.log("stream has ended");
       resolve(results);
     });
   });
@@ -131,7 +133,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
   // get data
   const results = await processStream(stream, config, (count) => {
-    io.sockets.emit("row", count);
+    io.sockets.emit("row", count); // can only handle 1 user at the time
   });
 
   // send data to client as downloadable file

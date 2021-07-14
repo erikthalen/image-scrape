@@ -1,4 +1,5 @@
 @import "./node_modules/carbon-components/css/carbon-components.min.css";
+@import "./css/loader.css";
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
@@ -15,22 +16,82 @@ body {
   gap: 10px;
   margin: 30px;
   padding-right: 30px;
-  border-right: 1px solid;
 }
 
 .config {
   display: grid;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
-.docs {
-  padding: 20px;
-  box-sizing: border-box;
+.hint {
+  --size: 14px;
+  color: grey;
+  position: relative;
+  border-radius: 100px;
+  height: var(--size);
+  width: var(--size);
+  border: 1px solid;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+}
+
+.hint:before,
+.hint:after {
+  content: "";
+  position: absolute;
+  background-color: currentColor;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.hint:before {
+  height: 5px;
+  width: 1px;
+  top: 59%;
+}
+
+.hint:after {
+  height: 1px;
+  width: 1px;
+  top: 22%;
+}
+
+.bx--form-item {
+  position: relative;
+}
+
+.bx--form__helper-text {
+  display: none;
+  position: absolute;
+  max-width: 15em;
+  background: white;
+  z-index: 1;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 1em;
+  border-radius: 1em;
+  left: 5em;
+}
+
+.hint:hover + .bx--form__helper-text {
+  display: block;
+}
+
+.submit {
   display: grid;
+  color: green;
   gap: 20px;
+  margin-top: 20px;
 }
 
-img {
-  width: 600px;
-  max-width: 100%;
+.submit p {
+  color: currentColor;
+  margin-bottom: 0;
+  margin-left: 0.63em;
+}
+
+.process {
+  display: flex;
+  align-items: center;
 }
