@@ -70,8 +70,9 @@ body {
   z-index: 1;
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 1em;
-  border-radius: 1em;
-  left: 5em;
+  border-radius: .5em;
+  right: 2em;
+  top: -.5em;
 }
 
 .hint:hover + .bx--form__helper-text {
@@ -92,6 +93,10 @@ body {
 }
 
 .process {
-  display: flex;
   align-items: center;
+  display: none;
+}
+
+.process.show {
+  display: flex;
 }

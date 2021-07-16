@@ -6,6 +6,7 @@ import streamifier from "streamifier";
 import { Server } from "socket.io";
 import http from "http";
 import transform from "parallel-transform";
+import { STATUS } from "./status.js";
 
 /**
  * NOTE: flow:
@@ -57,16 +58,16 @@ const processUrl = async (url, config) => {
 };
 
 /**
- * Takes a stream and !should! process it..
+ * Takes a stream and processes it
  */
-async function processStream(readable, config, onData) {
+async function processStream(readable, config, cb) {
   return new Promise(async (resolve) => {
     let results = [];
     let length = 0;
     let doneAmount = 0;
 
     /**
-     * It takes to long to "await" each row one-by-one,
+     * NOTE: It takes to long to "await" each row one-by-one,
      * "transform" runs in parallel, which should speed things up.
      */
     const parallismLevel = 300;
@@ -105,8 +106,7 @@ async function processStream(readable, config, onData) {
     stream.on("data", (result) => {
       results.push(result);
       doneAmount++;
-      // callback, for socket.io to update the client
-      onData(doneAmount);
+      cb(doneAmount);
     });
 
     /**
@@ -126,15 +126,19 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   const config = req.body;
   const buffer = req.file["buffer"];
 
+  io.sockets.emit("status", STATUS.RUNNING);
+
   // create stream
   const stream = streamifier
     .createReadStream(buffer)
-    .pipe(csv({ separator: "\t" }));
+    .pipe(csv({ separator: config.separator === 'tab' ? '\t' : ',' }));
 
   // get data
   const results = await processStream(stream, config, (count) => {
     io.sockets.emit("row", count); // can only handle 1 user at the time
   });
+
+  io.sockets.emit("status", STATUS.IDLE);
 
   // send data to client as downloadable file
   res

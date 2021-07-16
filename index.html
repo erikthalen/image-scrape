@@ -3,6 +3,7 @@
     <title>Image scape</title>
     <script src="app.js" type="module" defer></script>
     <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href="icon.png" type="image/png" />
   </head>
   <body>
     <div class="app">
@@ -12,24 +13,54 @@
       <form action="/upload" method="post" enctype="multipart/form-data">
         <div class="config">
           <div class="bx--form-item bx--text-input-wrapper">
-            <label for="text-input-1" class="bx--label">Seperator (not in use)</label>
+            <legend class="bx--label">Seperator</legend>
             <div class="hint"></div>
             <div class="bx--form__helper-text">
               The character used as a column seperator in the file. Can be
               obtained by opening the file in text-edit
             </div>
-            <div class="bx--text-input__field-wrapper">
-              <input
-                id="text-input-0"
-                type="text"
-                class="bx--text-input"
-                name="seperator"
-                value="\t"
-              />
+            <div class="bx--form-item">
+              <div class="bx--radio-button-group">
+                <div class="bx--radio-button-wrapper">
+                  <input
+                    id="radio-button-102gt4bgc47-1"
+                    class="bx--radio-button"
+                    type="radio"
+                    value="tab"
+                    name="seperator"
+                    tabindex="0"
+                    checked
+                  />
+                  <label
+                    for="radio-button-102gt4bgc47-1"
+                    class="bx--radio-button__label"
+                  >
+                    <span class="bx--radio-button__appearance"></span>
+                    <span class="bx--radio-button__label-text">tab</span>
+                  </label>
+                </div>
+                <div class="bx--radio-button-wrapper">
+                  <input
+                    id="radio-button-102gt4bgc47-2"
+                    class="bx--radio-button"
+                    type="radio"
+                    value="comma"
+                    name="seperator"
+                    tabindex="0"
+                  />
+                  <label
+                    for="radio-button-102gt4bgc47-2"
+                    class="bx--radio-button__label"
+                  >
+                    <span class="bx--radio-button__appearance"></span>
+                    <span class="bx--radio-button__label-text">comma</span>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
           <div class="bx--form-item bx--text-input-wrapper">
-            <label for="text-input-1" class="bx--label">CSVColumn</label>
+            <label for="text-input-1" class="bx--label">Column to fetch:</label>
             <div class="hint"></div>
             <div class="bx--form__helper-text">
               The column in the spreadsheet, that contains the url for the page
@@ -47,7 +78,10 @@
           </div>
           <div class="bx--form-item bx--text-input-wrapper">
             <label for="text-input-2" class="bx--label"
-              >container (css-selector)</label
+              >HTML tag to look in (<a
+                href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector"
+                >css-selector</a
+              >):</label
             >
             <div class="hint"></div>
             <div class="bx--form__helper-text">
@@ -65,7 +99,12 @@
             </div>
           </div>
           <div class="bx--form-item bx--text-input-wrapper">
-            <label for="text-input-3" class="bx--label">getAll</label>
+            <label for="text-input-3" class="bx--label"
+              >HTML elements to get (<a
+                href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector"
+                >css-selector</a
+              >):</label
+            >
             <div class="hint"></div>
             <div class="bx--form__helper-text">
               What elements we want, from inside the [container]
@@ -81,7 +120,12 @@
             </div>
           </div>
           <div class="bx--form-item bx--text-input-wrapper">
-            <label for="text-input-4" class="bx--label">getAttribute</label>
+            <label for="text-input-4" class="bx--label"
+              >Attribute to get (<a
+                href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector"
+                >css-selector</a
+              >):</label
+            >
             <div class="hint"></div>
             <div class="bx--form__helper-text">
               The attribute to get, from the [elements] in the [container]
@@ -97,7 +141,7 @@
             </div>
           </div>
           <div class="bx--form-item bx--text-input-wrapper">
-            <label for="text-input-5" class="bx--label">outputFilename</label>
+            <label for="text-input-5" class="bx--label">Output filename:</label>
             <div class="hint"></div>
             <div class="bx--form__helper-text">Name of the generated file.</div>
             <div class="bx--text-input__field-wrapper">
@@ -148,7 +192,10 @@
               <div></div>
               <div></div>
             </div>
-            <p class="bx--label"><span class="output">0</span>/<span class="total">0</span> rows processed</p>
+            <p class="bx--label">
+              <span class="output">0</span>/<span class="total">0</span> rows
+              processed
+            </p>
           </div>
         </div>
       </form>
