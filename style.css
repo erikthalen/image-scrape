@@ -86,17 +86,18 @@ body {
   margin-top: 20px;
 }
 
-.submit p {
-  color: currentColor;
-  margin-bottom: 0;
-  margin-left: 0.63em;
-}
-
 .process {
   align-items: center;
-  display: none;
+  display: flex;
+  gap: 0.63em;
+  /* display: none; */
 }
 
 .process.show {
   display: flex;
+}
+
+.submit p {
+  color: currentColor;
+  margin-bottom: 0;
 }

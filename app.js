@@ -28,7 +28,7 @@ socket.on("status", (status) => {
 });
 
 socket.on("row", (length) => {
-  console.log("length", length);
+  console.log("row", length);
   output.textContent = length;
 });
 

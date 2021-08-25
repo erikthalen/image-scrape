@@ -27,12 +27,6 @@ const io = new Server(server);
 app.use(express.static("./"));
 app.use(express.urlencoded({ extended: false }));
 
-io.on("connection", (socket) => {
-  socket.on("chat message", (msg) => {
-    console.log("message: " + msg);
-  });
-});
-
 /**
  * Takes an dom element and an attribute,
  * returns the value of the attribute
@@ -47,14 +41,18 @@ const getHTMLAttributes = (els, attr) => {
  * Fetches a dom document and querySelectsAll passed selector
  */
 const processUrl = async (url, config) => {
-  const {
-    window: { document },
-  } = await JSDOM.fromURL(url);
+  try {
+    const {
+      window: { document },
+    } = await JSDOM.fromURL(url);
 
-  const targetDOMElement = document.querySelector(config.container);
-  const elements = targetDOMElement.querySelectorAll(config.getAll);
+    const targetDOMElement = document.querySelector(config.container);
+    const elements = targetDOMElement.querySelectorAll(config.getAll);
 
-  return elements;
+    return elements;
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -74,7 +72,9 @@ async function processStream(readable, config, cb) {
     const stream = transform(parallismLevel, async (data, callback) => {
       const url = data[config.CSVColumn];
       const elements = await processUrl(url, config);
-      const imageUrls = getHTMLAttributes(elements, config.getAttribute);
+      const imageUrls = elements
+        ? getHTMLAttributes(elements, config.getAttribute)
+        : [];
       const result = {
         ...data,
         ...imageUrls.reduce((acc, url, idx) => {
@@ -131,7 +131,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   // create stream
   const stream = streamifier
     .createReadStream(buffer)
-    .pipe(csv({ separator: config.separator === 'tab' ? '\t' : ',' }));
+    .pipe(csv({ separator: "\t" }));
 
   // get data
   const results = await processStream(stream, config, (count) => {
